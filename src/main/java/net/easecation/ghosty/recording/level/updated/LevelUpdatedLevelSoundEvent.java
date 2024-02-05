@@ -5,11 +5,6 @@ import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BinaryStream;
 import net.easecation.ghosty.recording.level.LevelRecordNode;
-import org.itxtech.synapseapi.multiprotocol.protocol14.protocol.LevelSoundEventPacket14;
-import org.itxtech.synapseapi.multiprotocol.protocol16.protocol.LevelSoundEventPacket16;
-import org.itxtech.synapseapi.multiprotocol.protocol18.protocol.LevelSoundEventPacket18;
-import org.itxtech.synapseapi.multiprotocol.protocol18.protocol.LevelSoundEventPacketV218;
-import org.itxtech.synapseapi.multiprotocol.protocol19.protocol.LevelSoundEventPacketV319;
 
 public class LevelUpdatedLevelSoundEvent implements LevelUpdated {
 
@@ -34,26 +29,6 @@ public class LevelUpdatedLevelSoundEvent implements LevelUpdated {
     }
 
     public static LevelUpdatedLevelSoundEvent of(LevelSoundEventPacket packet) {
-        return new LevelUpdatedLevelSoundEvent(packet.sound, packet.x, packet.y, packet.z, packet.extraData, packet.entityIdentifier, packet.isBabyMob, packet.isGlobal);
-    }
-
-    public static LevelUpdatedLevelSoundEvent of(LevelSoundEventPacket14 packet) {
-        return new LevelUpdatedLevelSoundEvent(packet.sound, packet.x, packet.y, packet.z, packet.extraData, ":", packet.isBabyMob, packet.isGlobal);
-    }
-
-    public static LevelUpdatedLevelSoundEvent of(LevelSoundEventPacket16 packet) {
-        return new LevelUpdatedLevelSoundEvent(packet.sound, packet.x, packet.y, packet.z, packet.extraData, ":", packet.isBabyMob, packet.isGlobal);
-    }
-
-    public static LevelUpdatedLevelSoundEvent of(LevelSoundEventPacket18 packet) {
-        return new LevelUpdatedLevelSoundEvent(packet.sound, packet.x, packet.y, packet.z, packet.extraData, ":", packet.isBabyMob, packet.isGlobal);
-    }
-
-    public static LevelUpdatedLevelSoundEvent of(LevelSoundEventPacketV218 packet) {
-        return new LevelUpdatedLevelSoundEvent(packet.sound, packet.x, packet.y, packet.z, packet.extraData, packet.entityIdentifier, packet.isBabyMob, packet.isGlobal);
-    }
-
-    public static LevelUpdatedLevelSoundEvent of(LevelSoundEventPacketV319 packet) {
         return new LevelUpdatedLevelSoundEvent(packet.sound, packet.x, packet.y, packet.z, packet.extraData, packet.entityIdentifier, packet.isBabyMob, packet.isGlobal);
     }
 

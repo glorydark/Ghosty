@@ -2,11 +2,12 @@ package net.easecation.ghosty.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityID;
 import cn.nukkit.entity.data.EntityData;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.data.StringEntityData;
+import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -37,13 +38,14 @@ public class SimulatedEntity extends Entity {
     public record SkinInfo(String geoName, String dataHash) {
         public static SkinInfo fromSkin(Skin skin) {
             String skinMd5;
-            if (skin.getSkinMd5() != null) {
+            /*if (skin.getSkinMd5() != null) {
                 skinMd5 = skin.getSkinMd5();
             } else {
                 skinMd5 = MD5Util.md5SkinData(skin.getSkinData().data);
                 skin.setSkinMd5(skinMd5);
-            }
-            return new SkinInfo(skin.getGeometryName(), skinMd5);
+            }*/
+            //使用getSkinResourcePatch代替
+            return new SkinInfo(skin.getSkinResourcePatch(), skinMd5 = MD5Util.md5SkinData(skin.getSkinData().data));
         }
 
         @Override
@@ -86,7 +88,7 @@ public class SimulatedEntity extends Entity {
         this.networkId = networkId;
         this.entityIdentifier = entityIdentifier;
         this.originEid = originEid;
-        this.needEntityBaseTick = false;
+        //this.needEntityBaseTick = false;
     }
 
     @Override
@@ -100,11 +102,11 @@ public class SimulatedEntity extends Entity {
 
     @Override
     protected float getBaseOffset() {
-        if (this.networkId == EntityID.ITEM) {
+        if (this.networkId == EntityItem.NETWORK_ID) {
             return 0.125f;
-        } else if (this.networkId == -1 || this.networkId == EntityID.PLAYER) {
+        } else if (this.networkId == -1 || this.networkId == /*EntityID.PLAYER*/63) {
             return 1.62f;
-        } else if (this.networkId == EntityID.TNT) {
+        } else if (this.networkId == EntityPrimedTNT.NETWORK_ID) {
             return 0.49f;
         }
         return super.getBaseOffset();
@@ -121,6 +123,7 @@ public class SimulatedEntity extends Entity {
     public void setNameTag(String name) {
         if (globalNameTagProcessor == null) {
             super.setNameTag(name);
+            return;
         }
         this.setDataProperty(new StringEntityData(DATA_NAMETAG, name), false);
         for (Player player : this.getViewers().values()) {
@@ -133,6 +136,7 @@ public class SimulatedEntity extends Entity {
     public void setScoreTag(String score) {
         if (globalNameTagProcessor == null) {
             super.setScoreTag(score);
+            return;
         }
         this.setDataProperty(new StringEntityData(DATA_SCORE_TAG, score), false);
         for (Player player : this.getViewers().values()) {
@@ -147,7 +151,7 @@ public class SimulatedEntity extends Entity {
 
     public void setSkinInfo(SkinInfo skinInfo) {
         this.skinInfo = skinInfo;
-        if (this.getNetworkId() == -1 || this.getNetworkId() == EntityID.PLAYER) {
+        if (this.getNetworkId() == -1 || this.getNetworkId() == /*EntityID.PLAYER*/ 63) {
             Skin skin = registeredSkinMap.get(skinInfo);
             if (skin != null) {
                 for (Player player : this.hasSpawned.values()) {
@@ -164,7 +168,7 @@ public class SimulatedEntity extends Entity {
         }
         DataPacket pk = this.createAddEntityPacket(player);
         player.dataPacket(pk);
-        if (this.getNetworkId() == -1 || this.getNetworkId() == EntityID.PLAYER) {
+        if (this.getNetworkId() == -1 || this.getNetworkId() == /*EntityID.PLAYER*/ 63) {
             if (skinInfo != null) {
                 Skin skin = registeredSkinMap.get(skinInfo);
                 if (skin != null) {
@@ -184,7 +188,7 @@ public class SimulatedEntity extends Entity {
     }
 
     protected DataPacket createAddEntityPacket(Player player) {
-        if (networkId == EntityID.ITEM) {
+        if (networkId == EntityItem.NETWORK_ID) {
             AddItemEntityPacket addEntity = new AddItemEntityPacket();
             addEntity.entityUniqueId = this.getId();
             addEntity.entityRuntimeId = this.getId();
@@ -203,7 +207,7 @@ public class SimulatedEntity extends Entity {
             }
             addEntity.item = this.item;
             return addEntity;
-        } else if (networkId == -1 || networkId == EntityID.PLAYER) {
+        } else if (networkId == -1 || networkId == /*EntityID.PLAYER*/ 63) {
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = this.getUniqueId();
             pk.username = this.getNameTag();
@@ -216,7 +220,7 @@ public class SimulatedEntity extends Entity {
             pk.speedY = (float) this.motionY;
             pk.speedZ = (float) this.motionZ;
             pk.yaw = (float) this.yaw;
-            pk.headYaw = (float) this.yaw;
+            //pk.headYaw = (float) this.yaw;
             pk.pitch = (float) this.pitch;
             pk.item = this.item;
             if (globalNameTagProcessor != null && !this.getNameTag().isEmpty() || !this.getScoreTag().isEmpty()) {

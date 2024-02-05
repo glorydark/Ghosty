@@ -5,7 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.sound.SoundEnum;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.PlaySoundPacket;
@@ -21,6 +21,7 @@ import net.easecation.ghosty.recording.level.LevelRecord;
 import net.easecation.ghosty.recording.level.LevelRecordImpl;
 import net.easecation.ghosty.recording.level.LevelRecordNode;
 import net.easecation.ghosty.recording.level.updated.*;
+import net.easecation.ghosty.recording.player.LmlPlayerRecord;
 import net.easecation.ghosty.recording.player.PlayerRecord;
 import net.easecation.ghosty.recording.player.SkinlessPlayerRecord;
 
@@ -82,7 +83,7 @@ public class LevelRecordEngine {
     }
 
     public void addPlayer(Player player) {
-        PlayerRecordEngine recordEngine = new PlayerRecordEngine(player, SkinlessPlayerRecord::new);
+        PlayerRecordEngine recordEngine = new PlayerRecordEngine(player, LmlPlayerRecord::new);
         recordEngine.setUnifySave(false);
         recordEngine.setTick(this.tick + 1);  // 这边需要+1，因为玩家是从下一tick才开始录制的
         playerRecordEngines.put(player, recordEngine);
@@ -113,7 +114,7 @@ public class LevelRecordEngine {
         for (Player player : level.getPlayers().values()) {
             // 添加玩家到录制器中
             if (!playerRecordEngines.containsKey(player)) {
-                this.addPlayer(player, SkinlessPlayerRecord::new);
+                this.addPlayer(player, LmlPlayerRecord::new);
             }
         }
         playerRecordEngines.entrySet().removeIf(e -> e.getValue().isStopped());
@@ -199,7 +200,7 @@ public class LevelRecordEngine {
             case ProtocolInfo.LEVEL_EVENT_PACKET:
             case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET:
             case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V2:
-            case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V3:
+            //case ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V3:
             // case ProtocolInfo.LEVEL_EVENT_GENERIC_PACKET:
             case ProtocolInfo.PLAY_SOUND_PACKET:
             // case ProtocolInfo.STOP_SOUND_PACKET:
@@ -268,7 +269,7 @@ public class LevelRecordEngine {
         this.levelRecordNode.offerExtraRecordUpdate(LevelUpdatedCustom.of(obj));
     }
 
-    public void recordSoundPacket(Vector3 pos, SoundEnum soundEnum, float volume, float pitch) {
+    public void recordSoundPacket(Vector3 pos, Sound soundEnum, float volume, float pitch) {
         this.recordSoundPacket(pos, soundEnum.getSound(), volume, pitch);
     }
 

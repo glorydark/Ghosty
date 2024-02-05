@@ -2,7 +2,6 @@ package net.easecation.ghosty.recording.entity;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
-import cn.nukkit.entity.EntityID;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.NBTIO;
@@ -44,7 +43,7 @@ public final class EntityRecordNode implements Serializable {
             if (human.getSkin() != null) {
                 skinInfo = SimulatedEntity.SkinInfo.fromSkin(human.getSkin());
             }
-        } else if (entity.getNetworkId() == EntityID.ITEM) {
+        } else if (entity.getNetworkId() == EntityItem.NETWORK_ID) {
             // 尝试从nbt读取物品
             if (entity.namedTag != null && entity.namedTag.contains("Item")) {
                 item = NBTIO.getItemHelper(entity.namedTag.getCompound("Item"));

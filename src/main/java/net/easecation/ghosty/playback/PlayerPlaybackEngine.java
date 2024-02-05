@@ -257,7 +257,7 @@ public class PlayerPlaybackEngine {
             PlayerRecordNode init = PlayerRecordNode.createZero();
             updates.forEach(e -> e.applyTo(init));
             Location loc = new Location(init.getX(), init.getY(), init.getZ(), init.getYaw(), init.getPitch(), level);
-            this.npc = new PlaybackNPC(this, loc, record.getSkin(), init.getTagName(), null);
+            this.npc = new PlaybackNPC(this, loc, record.getSkin() == null ? PlaybackNPC.defaultSkin : record.getSkin(), init.getTagName(), null);
             this.npc.spawnToAll();
             if (DEBUG_DUMP) {
                 GhostyPlugin.getInstance().getLogger().debug(record.getPlayerName() + " " + tick + " -> spawn " + record.getPlayerName());
@@ -317,7 +317,7 @@ public class PlayerPlaybackEngine {
         }
         for (Player player : this.attachedPlayers) {
             player.setPosition(this.npc);
-            player.sendPosition(player.getPlayer(), player.getYaw(), player.getPitch(), player.isNetEaseClient() ? MovePlayerPacket.MODE_NORMAL : MovePlayerPacket.MODE_TELEPORT);
+            player.sendPosition(player.getPlayer(), player.getYaw(), player.getPitch(), MovePlayerPacket.MODE_TELEPORT);
             if (onPlayerAttachTick != null) {
                 onPlayerAttachTick.accept(this, player);
             }

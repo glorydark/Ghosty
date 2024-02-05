@@ -3,6 +3,7 @@ package net.easecation.ghosty.recording.player.updated;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BinaryStream;
+import net.easecation.ghosty.GhostyPlugin;
 import net.easecation.ghosty.entity.PlaybackNPC;
 import net.easecation.ghosty.recording.player.PlayerRecordNode;
 
@@ -59,12 +60,12 @@ public class PlayerUpdatedArmor3 implements PlayerUpdated {
 
     @Override
     public void write(BinaryStream stream) {
-        stream.putSlot(this.item);
+        stream.putSlot(GhostyPlugin.DATA_SAVE_PROTOCOL, this.item);
     }
 
     @Override
     public void read(BinaryStream stream) {
-        this.item = stream.getSlot();
+        this.item = stream.getSlot(GhostyPlugin.DATA_SAVE_PROTOCOL);
     }
 
     @Override

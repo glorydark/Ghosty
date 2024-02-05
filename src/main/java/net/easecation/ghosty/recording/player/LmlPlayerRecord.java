@@ -6,6 +6,7 @@ import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BinaryStream;
+import net.easecation.ghosty.GhostyPlugin;
 import net.easecation.ghosty.MathUtil;
 import net.easecation.ghosty.PlaybackIterator;
 import net.easecation.ghosty.recording.player.updated.*;
@@ -31,10 +32,10 @@ public class LmlPlayerRecord implements PlayerRecord {
         this.playerName = stream.getString();
         int offset = stream.getOffset();
         try {
-            this.skin = stream.getSkinLegacy();
+            this.skin = stream.getSkin(GhostyPlugin.DATA_SAVE_PROTOCOL);
         } catch (IllegalArgumentException e) {
             stream.setOffset(offset);
-            this.skin = stream.getSkin();
+            this.skin = stream.getSkin(GhostyPlugin.DATA_SAVE_PROTOCOL);
         }
         int len = (int) stream.getUnsignedVarInt();
         for (int i = 0; i < len; i++) {
@@ -126,7 +127,7 @@ public class LmlPlayerRecord implements PlayerRecord {
         BinaryStream stream = new BinaryStream();
         stream.putByte(PlayerRecord.OBJECT_LML);
         stream.putString(this.playerName);
-        stream.putSkin(this.skin);
+        stream.putSkin(GhostyPlugin.DATA_SAVE_PROTOCOL, this.skin);
         stream.putUnsignedVarInt(this.rec.size());
         for (RecordPair pair : this.rec) {
             pair.write(stream);

@@ -42,7 +42,7 @@ public class EntityRecordImpl implements EntityRecord {
     public EntityRecordImpl(Entity entity) {
         this.entityId = entity.getId();
         this.networkId = entity.getNetworkId();
-        this.entityIdentifier = entity.getNetworkId() > 0 ? "" : entity.getIdentifier();
+        this.entityIdentifier = entity.getNetworkId() > 0 ? "" : entity.getIdentifier().getNamespace();
     }
 
     @Override

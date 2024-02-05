@@ -53,7 +53,10 @@ public class PlaybackNPC extends EntityHuman implements InventoryHolder {
                                 .add(new DoubleTag("", 0)))
                         .putList(new ListTag<FloatTag>("Rotation")
                                         .add(new FloatTag("", (float)pos.yaw))
-                                        .add(new FloatTag("", (float)pos.pitch))
+                                        .add(new FloatTag("", (float)pos.pitch)))
+                        .putCompound("Skin", (new CompoundTag())
+                                        .putByteArray("Data", skin.getSkinData().data)
+                                        .putString("ModelId", skin.getSkinId())
                         ), engine, skin, name, viewers);
         this.saveNBT();
     }
@@ -117,7 +120,8 @@ public class PlaybackNPC extends EntityHuman implements InventoryHolder {
             pk.speedY = (float) this.motionY;
             pk.speedZ = (float) this.motionZ;
             pk.yaw = (float) this.yaw;
-            pk.headYaw = (float) this.yaw;
+            //TODO check
+            //pk.headYaw = (float) this.yaw;
             pk.pitch = (float) this.pitch;
             pk.item = this.getInventory().getItemInHand();
             pk.metadata = this.dataProperties;
@@ -140,7 +144,7 @@ public class PlaybackNPC extends EntityHuman implements InventoryHolder {
     }
 
     public void resendPosition() {
-        this.getLevel().addEntityMovement(this.getChunkX(), this.getChunkZ(), this.getId(), this.x, y, this.z, this.yaw, this.pitch, this.yaw);
+        this.getLevel().addEntityMovement(this, this.x, this.y, this.z, this.yaw, this.pitch, this.yaw);
     }
 
     @Override

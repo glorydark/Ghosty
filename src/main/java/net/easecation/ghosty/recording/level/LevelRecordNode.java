@@ -10,16 +10,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.easecation.ghosty.GhostyPlugin;
 import net.easecation.ghosty.recording.level.updated.*;
-import org.itxtech.synapseapi.multiprotocol.protocol112.protocol.LevelEventPacket112;
-import org.itxtech.synapseapi.multiprotocol.protocol116100.protocol.LevelEventPacket116100;
-import org.itxtech.synapseapi.multiprotocol.protocol14.protocol.LevelEventPacket14;
-import org.itxtech.synapseapi.multiprotocol.protocol14.protocol.LevelSoundEventPacket14;
-import org.itxtech.synapseapi.multiprotocol.protocol16.protocol.LevelEventPacket16;
-import org.itxtech.synapseapi.multiprotocol.protocol16.protocol.LevelSoundEventPacket16;
-import org.itxtech.synapseapi.multiprotocol.protocol17.protocol.LevelEventPacket17;
-import org.itxtech.synapseapi.multiprotocol.protocol18.protocol.LevelSoundEventPacket18;
-import org.itxtech.synapseapi.multiprotocol.protocol18.protocol.LevelSoundEventPacketV218;
-import org.itxtech.synapseapi.multiprotocol.protocol19.protocol.LevelSoundEventPacketV319;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,29 +73,9 @@ public final class LevelRecordNode {
                 // LevelEventPacket
                 else if (packet instanceof LevelEventPacket pk) {
                     list.add(LevelUpdatedLevelEvent.of(pk));
-                } else if (packet instanceof LevelEventPacket14 pk) {
-                    list.add(LevelUpdatedLevelEvent.of(pk));
-                } else if (packet instanceof LevelEventPacket16 pk) {
-                    list.add(LevelUpdatedLevelEvent.of(pk));
-                } else if (packet instanceof LevelEventPacket17 pk) {
-                    list.add(LevelUpdatedLevelEvent.of(pk));
-                } else if (packet instanceof LevelEventPacket112 pk) {
-                    list.add(LevelUpdatedLevelEvent.of(pk));
-                } else if (packet instanceof LevelEventPacket116100 pk) {
-                    list.add(LevelUpdatedLevelEvent.of(pk));
                 }
                 // LevelSoundEventPacket
                 else if (packet instanceof LevelSoundEventPacket pk) {
-                    list.add(LevelUpdatedLevelSoundEvent.of(pk));
-                } else if (packet instanceof LevelSoundEventPacket14 pk) {
-                    list.add(LevelUpdatedLevelSoundEvent.of(pk));
-                } else if (packet instanceof LevelSoundEventPacket16 pk) {
-                    list.add(LevelUpdatedLevelSoundEvent.of(pk));
-                } else if (packet instanceof LevelSoundEventPacket18 pk) {
-                    list.add(LevelUpdatedLevelSoundEvent.of(pk));
-                } else if (packet instanceof LevelSoundEventPacketV218 pk) {
-                    list.add(LevelUpdatedLevelSoundEvent.of(pk));
-                } else if (packet instanceof LevelSoundEventPacketV319 pk) {
                     list.add(LevelUpdatedLevelSoundEvent.of(pk));
                 } else if (packet instanceof PlaySoundPacket pk) {
                     list.add(LevelUpdatedPlaySound.of(pk));
@@ -118,10 +88,10 @@ public final class LevelRecordNode {
 
     public void applyToLevel(int tick, Level level) {
         for (Map.Entry<BlockVector3, Block> entry : blockChanges.entrySet()) {
-            Block originBlock = level.getBlock(entry.getKey());
+            Block originBlock = level.getBlock(entry.getKey().asVector3());
             this.blockChangeLog.putIfAbsent(tick, new HashMap<>());
             this.blockChangeLog.get(tick).put(entry.getKey(), originBlock);
-            level.setBlock(entry.getKey(), entry.getValue(), true, false);
+            level.setBlock(entry.getKey().asVector3(), entry.getValue(), true, false);
         }
         for (Map.Entry<Long, List<DataPacket>> entry : levelChunkPackets.long2ObjectEntrySet()) {
             int chunkX = Level.getHashX(entry.getKey());
@@ -151,7 +121,7 @@ public final class LevelRecordNode {
         while (last > tick) {
             Map<BlockVector3, Block> map = blockChangeLog.remove(last);
             for (Map.Entry<BlockVector3, Block> entry : map.entrySet()) {
-                level.setBlock(entry.getKey(), entry.getValue(), true, false);
+                level.setBlock(entry.getKey().asVector3(), entry.getValue(), true, false);
             }
             last = blockChangeLog.isEmpty() ? -1 : blockChangeLog.lastIntKey();
         }

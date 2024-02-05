@@ -5,11 +5,6 @@ import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BinaryStream;
 import net.easecation.ghosty.recording.level.LevelRecordNode;
-import org.itxtech.synapseapi.multiprotocol.protocol112.protocol.LevelEventPacket112;
-import org.itxtech.synapseapi.multiprotocol.protocol116100.protocol.LevelEventPacket116100;
-import org.itxtech.synapseapi.multiprotocol.protocol14.protocol.LevelEventPacket14;
-import org.itxtech.synapseapi.multiprotocol.protocol16.protocol.LevelEventPacket16;
-import org.itxtech.synapseapi.multiprotocol.protocol17.protocol.LevelEventPacket17;
 
 public class LevelUpdatedLevelEvent implements LevelUpdated {
 
@@ -28,26 +23,6 @@ public class LevelUpdatedLevelEvent implements LevelUpdated {
     }
 
     public static LevelUpdatedLevelEvent of(LevelEventPacket packet) {
-        return new LevelUpdatedLevelEvent(packet.evid, packet.x, packet.y, packet.z, packet.data);
-    }
-
-    public static LevelUpdatedLevelEvent of(LevelEventPacket14 packet) {
-        return new LevelUpdatedLevelEvent(packet.evid, packet.x, packet.y, packet.z, packet.data);
-    }
-
-    public static LevelUpdatedLevelEvent of(LevelEventPacket16 packet) {
-        return new LevelUpdatedLevelEvent(packet.evid, packet.x, packet.y, packet.z, packet.data);
-    }
-
-    public static LevelUpdatedLevelEvent of(LevelEventPacket17 packet) {
-        return new LevelUpdatedLevelEvent(packet.evid, packet.x, packet.y, packet.z, packet.data);
-    }
-
-    public static LevelUpdatedLevelEvent of(LevelEventPacket112 packet) {
-        return new LevelUpdatedLevelEvent(packet.evid, packet.x, packet.y, packet.z, packet.data);
-    }
-
-    public static LevelUpdatedLevelEvent of(LevelEventPacket116100 packet) {
         return new LevelUpdatedLevelEvent(packet.evid, packet.x, packet.y, packet.z, packet.data);
     }
 

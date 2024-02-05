@@ -56,7 +56,7 @@ public final class PlayerRecordNode implements Serializable {
                 player.getInventory().getArmorItem(1),
                 player.getInventory().getArmorItem(2),
                 player.getInventory().getArmorItem(3),
-                player.getOffhandInventory().getItem()
+                player.getOffhandInventory().getItem(0)
         );
     }
 

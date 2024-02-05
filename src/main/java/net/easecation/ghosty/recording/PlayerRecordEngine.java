@@ -15,7 +15,6 @@ import net.easecation.ghosty.recording.player.updated.PlayerUpdated;
 import net.easecation.ghosty.recording.player.updated.PlayerUpdatedAnimate;
 import net.easecation.ghosty.recording.player.updated.PlayerUpdatedEntityEvent;
 import net.easecation.ghosty.recording.player.updated.PlayerUpdatedTakeItemEntity;
-import org.itxtech.synapseapi.SynapsePlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,15 +98,15 @@ public class PlayerRecordEngine {
 
     public void onPacketSendEvent(DataPacket packet) {
         if (packet instanceof AnimatePacket pk) {
-            if (pk.eid == this.player.getId() || pk.eid == SynapsePlayer.SYNAPSE_PLAYER_ENTITY_ID) {
+            if (pk.eid == this.player.getId()/* || pk.eid == SynapsePlayer.SYNAPSE_PLAYER_ENTITY_ID*/) {
                 this.extraUpdates.add(PlayerUpdatedAnimate.of(pk.action.getId(), pk.rowingTime));
             }
         } else if (packet instanceof EntityEventPacket pk) {
-            if (pk.eid == this.player.getId() || pk.eid == SynapsePlayer.SYNAPSE_PLAYER_ENTITY_ID) {
+            if (pk.eid == this.player.getId()/* || pk.eid == SynapsePlayer.SYNAPSE_PLAYER_ENTITY_ID*/) {
                 this.extraUpdates.add(PlayerUpdatedEntityEvent.of(pk.event, pk.data));
             }
         } else if (packet instanceof TakeItemEntityPacket pk) {
-            if (pk.entityId == this.player.getId() || pk.entityId == SynapsePlayer.SYNAPSE_PLAYER_ENTITY_ID) {
+            if (pk.entityId == this.player.getId()/* || pk.entityId == SynapsePlayer.SYNAPSE_PLAYER_ENTITY_ID*/) {
                 this.extraUpdates.add(PlayerUpdatedTakeItemEntity.of(pk.target));
             }
         }

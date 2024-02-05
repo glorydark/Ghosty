@@ -12,12 +12,17 @@ import cn.nukkit.event.level.WeatherChangeEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.plugin.PluginBase;
+import cn.nukkit.utils.Utils;
 import net.easecation.ghosty.entity.PlaybackNPC;
 import net.easecation.ghosty.recording.LevelRecordEngine;
 import net.easecation.ghosty.recording.PlayerRecordEngine;
 import net.easecation.ghosty.recording.player.PlayerRecord;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +33,7 @@ public class GhostyPlugin extends PluginBase implements Listener {
 
     private static GhostyPlugin instance;
     public static final boolean DEBUG_DUMP = false;
+    public static final int DATA_SAVE_PROTOCOL = Utils.dynamic(ProtocolInfo.v1_20_0);
 
     /* 录制完成的成品 */
     private final List<PlayerRecord> playerRecords = new ArrayList<>();
@@ -42,7 +48,14 @@ public class GhostyPlugin extends PluginBase implements Listener {
     public void onLoad() {
         if (instance == null) instance = this;
         InputStream skinStream = this.getResource("skin.png");
-        PlaybackNPC.defaultSkin = new Skin().setSkinData(skinStream);
+        BufferedImage bufferedImage = null;
+        try {
+            bufferedImage = ImageIO.read(skinStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        PlaybackNPC.defaultSkin = new Skin();
+        PlaybackNPC.defaultSkin.setSkinData(bufferedImage);
     }
 
     @Override
