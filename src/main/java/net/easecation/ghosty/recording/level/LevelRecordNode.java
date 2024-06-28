@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 import static net.easecation.ghosty.GhostyPlugin.DEBUG_DUMP;
@@ -35,7 +36,7 @@ public final class LevelRecordNode {
      * 用于录制和回放
      * 暂存所有应用于世界的方块变更，然后在每tick应用于世界
      */
-    private final Map<BlockVector3, Block> blockChanges = new HashMap<>();
+    private final Map<BlockVector3, Block> blockChanges = new ConcurrentHashMap<>();
     /**
      * 用于录制和回放
      * 暂存所有应用于世界的数据包，然后在每tick应用于世界
