@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.Identifier;
 import net.easecation.ghosty.GhostyPlugin;
 import net.easecation.ghosty.PlaybackIterator;
 import net.easecation.ghosty.entity.SimulatedEntity;
@@ -42,7 +43,8 @@ public class EntityRecordImpl implements EntityRecord {
     public EntityRecordImpl(Entity entity) {
         this.entityId = entity.getId();
         this.networkId = entity.getNetworkId();
-        this.entityIdentifier = entity.getNetworkId() > 0 ? "" : entity.getIdentifier().getNamespace();
+        Identifier identifier = entity.getIdentifier();
+        this.entityIdentifier = entity.getNetworkId() > 0 ? "" : identifier == null? "": identifier.getNamespace();
     }
 
     @Override
