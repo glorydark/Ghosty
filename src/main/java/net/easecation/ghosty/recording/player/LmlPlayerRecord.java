@@ -5,13 +5,12 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.BinaryStream;
 import net.easecation.ghosty.GhostyPlugin;
 import net.easecation.ghosty.MathUtil;
 import net.easecation.ghosty.PlaybackIterator;
 import net.easecation.ghosty.recording.player.updated.*;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -33,96 +32,16 @@ public class LmlPlayerRecord implements PlayerRecord {
         this.playerName = stream.getString();
         int offset = stream.getOffset();
         try {
-            this.skin = getSkin(stream, GhostyPlugin.DATA_SAVE_PROTOCOL);
+            this.skin = stream.getSkin(GhostyPlugin.DATA_SAVE_PROTOCOL);
         } catch (IllegalArgumentException e) {
             stream.setOffset(offset);
-            this.skin = getSkin(stream, GhostyPlugin.DATA_SAVE_PROTOCOL);
+            this.skin = stream.getSkin(GhostyPlugin.DATA_SAVE_PROTOCOL);
         }
         int len = (int) stream.getUnsignedVarInt();
         for (int i = 0; i < len; i++) {
             RecordPair pair = new RecordPair(stream);
             rec.add(pair);
         }
-    }
-
-    public Skin getSkin(BinaryStream binaryStream, int protocol) {
-        Skin skin = new Skin();
-        skin.setSkinId(binaryStream.getString());
-        if (protocol >= 428) {
-            skin.setPlayFabId(binaryStream.getString());
-        }
-
-        skin.setSkinResourcePatch(binaryStream.getString());
-        skin.setSkinData(binaryStream.getImage(1048576));
-        int animationCount = binaryStream.getLInt();
-
-        int piecesLength;
-        int i;
-        for(piecesLength = 0; piecesLength < Math.min(animationCount, 1024); ++piecesLength) {
-            SerializedImage image = binaryStream.getImage(1048576);
-            i = binaryStream.getLInt();
-            float frames = binaryStream.getLFloat();
-            int expression = protocol >= 419 ? binaryStream.getLInt() : 0;
-            skin.getAnimations().add(new SkinAnimation(image, i, frames, expression));
-        }
-
-        skin.setCapeData(binaryStream.getImage(8192));
-        skin.setGeometryData(binaryStream.getString());
-        if (protocol >= 465) {
-            skin.setGeometryDataEngineVersion(binaryStream.getString());
-        }
-
-        skin.setAnimationData(binaryStream.getString());
-        if (protocol < 465) {
-            skin.setPremium(binaryStream.getBoolean());
-            skin.setPersona(binaryStream.getBoolean());
-            skin.setCapeOnClassic(binaryStream.getBoolean());
-        }
-
-        skin.setCapeId(binaryStream.getString());
-        skin.setFullSkinId(binaryStream.getString());
-        if (protocol >= 390) {
-            skin.setArmSize(binaryStream.getString());
-            skin.setSkinColor(binaryStream.getString());
-            piecesLength = binaryStream.getLInt();
-
-            int tintsLength;
-            String pieceType;
-            for(tintsLength = 0; tintsLength < Math.min(piecesLength, 1024); ++tintsLength) {
-                String pieceId = binaryStream.getString();
-                pieceType = binaryStream.getString();
-                String packId = binaryStream.getString();
-                boolean isDefault = binaryStream.getBoolean();
-                String productId = binaryStream.getString();
-                skin.getPersonaPieces().add(new PersonaPiece(pieceId, pieceType, packId, isDefault, productId));
-            }
-
-            tintsLength = binaryStream.getLInt();
-
-            for(i = 0; i < Math.min(tintsLength, 1024); ++i) {
-                pieceType = binaryStream.getString();
-                List<String> colors = new ArrayList();
-                int colorsLength = binaryStream.getLInt();
-
-                for(int i2 = 0; i2 < Math.min(colorsLength, 1024); ++i2) {
-                    colors.add(binaryStream.getString());
-                }
-
-                skin.getTintColors().add(new PersonaPieceTint(pieceType, colors));
-            }
-
-            if (protocol >= 465) {
-                skin.setPremium(binaryStream.getBoolean());
-                skin.setPersona(binaryStream.getBoolean());
-                skin.setCapeOnClassic(binaryStream.getBoolean());
-                skin.setPrimaryUser(binaryStream.getBoolean());
-                if (protocol >= 568) {
-                    skin.setOverridingPlayerAppearance(binaryStream.getBoolean());
-                }
-            }
-        }
-
-        return skin;
     }
 
     public LmlPlayerRecord(Player player) {

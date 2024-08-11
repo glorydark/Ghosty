@@ -65,28 +65,23 @@ public final class LevelRecordNode {
         for (Map.Entry<BlockVector3, Block> entry : blockChanges.entrySet()) {
             list.add(LevelUpdatedBlockChange.of(entry.getKey(), entry.getValue()));
         }
-        levelChunkPackets.remove(null);
-        try {
-            for (Map.Entry<Long, List<DataPacket>> entry : levelChunkPackets.long2ObjectEntrySet()) {
-                for (DataPacket packet : entry.getValue()) {
-                    // BlockEventPacket
-                    if (packet instanceof BlockEventPacket pk) {
-                        list.add(LevelUpdatedBlockEvent.of(pk));
-                    }
-                    // LevelEventPacket
-                    else if (packet instanceof LevelEventPacket pk) {
-                        list.add(LevelUpdatedLevelEvent.of(pk));
-                    }
-                    // LevelSoundEventPacket
-                    else if (packet instanceof LevelSoundEventPacket pk) {
-                        list.add(LevelUpdatedLevelSoundEvent.of(pk));
-                    } else if (packet instanceof PlaySoundPacket pk) {
-                        list.add(LevelUpdatedPlaySound.of(pk));
-                    }
+        for (Map.Entry<Long, List<DataPacket>> entry : levelChunkPackets.long2ObjectEntrySet()) {
+            for (DataPacket packet : entry.getValue()) {
+                // BlockEventPacket
+                if (packet instanceof BlockEventPacket pk) {
+                    list.add(LevelUpdatedBlockEvent.of(pk));
+                }
+                // LevelEventPacket
+                else if (packet instanceof LevelEventPacket pk) {
+                    list.add(LevelUpdatedLevelEvent.of(pk));
+                }
+                // LevelSoundEventPacket
+                else if (packet instanceof LevelSoundEventPacket pk) {
+                    list.add(LevelUpdatedLevelSoundEvent.of(pk));
+                } else if (packet instanceof PlaySoundPacket pk) {
+                    list.add(LevelUpdatedPlaySound.of(pk));
                 }
             }
-        } catch (NullPointerException ignored) {
-            System.err.println("Encountered a null entry, skipping...");
         }
         list.addAll(extraRecordUpdates);
         return list;

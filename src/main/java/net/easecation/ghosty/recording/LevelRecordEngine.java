@@ -23,7 +23,6 @@ import net.easecation.ghosty.recording.level.LevelRecordNode;
 import net.easecation.ghosty.recording.level.updated.*;
 import net.easecation.ghosty.recording.player.LmlPlayerRecord;
 import net.easecation.ghosty.recording.player.PlayerRecord;
-import net.easecation.ghosty.recording.player.SkinlessPlayerRecord;
 
 import java.util.*;
 import java.util.function.Function;
