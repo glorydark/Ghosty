@@ -23,9 +23,9 @@ import net.easecation.ghosty.recording.level.LevelRecordNode;
 import net.easecation.ghosty.recording.level.updated.*;
 import net.easecation.ghosty.recording.player.LmlPlayerRecord;
 import net.easecation.ghosty.recording.player.PlayerRecord;
+import net.easecation.ghosty.recording.player.SkinlessPlayerRecord;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class LevelRecordEngine {
@@ -40,23 +40,12 @@ public class LevelRecordEngine {
     private final LevelRecordNode levelRecordNode;
     private final Map<Entity, EntityRecord> entityRecords = new HashMap<>();
     private final List<EntityRecord> closedEntityRecords = new ArrayList<>();
-    private boolean recordCreativePlayers = false;
-    private boolean recordSpectators = false;
 
-    private TaskHandler taskHandler;
+    private final TaskHandler taskHandler;
     private final int callbackIdBlockSet;
     private final int callbackIdChunkPacketSend;
-    private final List<Consumer<LevelRecordEngine>> startConsumers = new ArrayList<>();
-    private final List<Consumer<LevelRecordEngine>> tickConsumers = new ArrayList<>();
-    private final List<Consumer<LevelRecordEngine>> endConsumers = new ArrayList<>();
 
     public LevelRecordEngine(Level level) {
-        this(level, true, true);
-    }
-
-    public LevelRecordEngine(Level level, boolean recordCreativePlayers, boolean recordSpectators) {
-        this.recordCreativePlayers = recordCreativePlayers;
-        this.recordSpectators = recordSpectators;
         this.level = level;
         this.levelRecord = new LevelRecordImpl();
         this.levelRecordNode = new LevelRecordNode();
@@ -70,9 +59,6 @@ public class LevelRecordEngine {
         }
         this.taskHandler = Server.getInstance().getScheduler().scheduleRepeatingTask(GhostyPlugin.getInstance(), this::onTick, 1);
         GhostyPlugin.getInstance().recordingLevelEngines.put(level, this);
-        for (Consumer<LevelRecordEngine> consumer : this.getStartConsumers()) {
-            consumer.accept(this);
-        }
     }
 
     public void checkTimeRecord() {
@@ -114,30 +100,6 @@ public class LevelRecordEngine {
         playerRecordEngines.remove(player);
     }
 
-    public void addStartConsumer(Consumer<LevelRecordEngine>... engineSuppliers) {
-        this.startConsumers.addAll(Arrays.asList(engineSuppliers));
-    }
-
-    public void addTickConsumer(Consumer<LevelRecordEngine>... engineSuppliers) {
-        this.tickConsumers.addAll(Arrays.asList(engineSuppliers));
-    }
-
-    public void addEndConsumer(Consumer<LevelRecordEngine>... engineSuppliers) {
-        this.endConsumers.addAll(Arrays.asList(engineSuppliers));
-    }
-
-    public List<Consumer<LevelRecordEngine>> getStartConsumers() {
-        return startConsumers;
-    }
-
-    public List<Consumer<LevelRecordEngine>> getTickConsumers() {
-        return tickConsumers;
-    }
-
-    public List<Consumer<LevelRecordEngine>> getEndConsumers() {
-        return endConsumers;
-    }
-
     public void onTick() {
         if (!this.recording) {
             return;
@@ -152,12 +114,6 @@ public class LevelRecordEngine {
         for (Player player : level.getPlayers().values()) {
             // 添加玩家到录制器中
             if (!playerRecordEngines.containsKey(player)) {
-                if (player.getGamemode() == Player.CREATIVE && !this.isRecordCreativePlayers()) {
-                    continue;
-                }
-                if (player.getGamemode() == Player.SPECTATOR && !this.isRecordSpectators()) {
-                    continue;
-                }
                 this.addPlayer(player, LmlPlayerRecord::new);
             }
         }
@@ -178,9 +134,6 @@ public class LevelRecordEngine {
                 iterator.remove();
             }
         }
-        for (Consumer<LevelRecordEngine> consumer : this.getTickConsumers()) {
-            consumer.accept(this);
-        }
         this.tick++;
     }
 
@@ -194,9 +147,6 @@ public class LevelRecordEngine {
         this.taskHandler.cancel();
         this.level.removeCallbackBlockSet(this.callbackIdBlockSet);
         this.level.removeCallbackChunkPacketSend(this.callbackIdChunkPacketSend);
-        for (Consumer<LevelRecordEngine> consumer : this.getEndConsumers()) {
-            consumer.accept(this);
-        }
     }
 
     public LevelRecordPack toRecordPack() {
@@ -332,21 +282,5 @@ public class LevelRecordEngine {
         pk.volume = volume;
         pk.pitch = pitch;
         this.levelRecordNode.handleLevelChunkPacket(Level.chunkHash(pk.x >> 4, pk.z >> 4), pk);
-    }
-
-    public boolean isRecordCreativePlayers() {
-        return recordCreativePlayers;
-    }
-
-    public boolean isRecordSpectators() {
-        return recordSpectators;
-    }
-
-    public void setRecordSpectators(boolean recordSpectators) {
-        this.recordSpectators = recordSpectators;
-    }
-
-    public void setRecordCreativePlayers(boolean recordCreativePlayers) {
-        this.recordCreativePlayers = recordCreativePlayers;
     }
 }
