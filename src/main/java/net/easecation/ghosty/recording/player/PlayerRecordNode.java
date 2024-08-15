@@ -41,7 +41,28 @@ public final class PlayerRecordNode implements Serializable {
 
     public static PlayerRecordNode of(Player player) {
         Item hand = null;
-        if(player.getInventory() != null) hand = player.getInventory().getItemInHand();
+        if (player.getInventory() != null) {
+            hand = player.getInventory().getItemInHand();
+        } else {
+            if (!player.isOnline()) {
+                return new PlayerRecordNode(
+                        player.getX(),
+                        player.getY(),
+                        player.getZ(),
+                        player.getYaw(),
+                        player.getPitch(),
+                        player.getLevel().getName(),
+                        player.getDisplayName(),
+                        Item.AIR_ITEM,
+                        player.getDataPropertyLong(Entity.DATA_FLAGS),
+                        Item.AIR_ITEM,
+                        Item.AIR_ITEM,
+                        Item.AIR_ITEM,
+                        Item.AIR_ITEM,
+                        Item.AIR_ITEM
+                );
+            }
+        }
         return new PlayerRecordNode(
                 player.getX(),
                 player.getY(),
