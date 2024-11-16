@@ -26,6 +26,7 @@ public final class PlayerRecordNode implements Serializable {
 
     private double yaw;
     private double pitch;
+    private double headYaw;
     private String level;
 
     private String tagName;
@@ -51,6 +52,7 @@ public final class PlayerRecordNode implements Serializable {
                         player.getZ(),
                         player.getYaw(),
                         player.getPitch(),
+                        player.getHeadYaw(),
                         player.getLevel().getName(),
                         player.getDisplayName(),
                         Item.AIR_ITEM,
@@ -69,6 +71,7 @@ public final class PlayerRecordNode implements Serializable {
                 player.getZ(),
                 player.getYaw(),
                 player.getPitch(),
+                player.getHeadYaw(),
                 player.getLevel().getName(),
                 player.getDisplayName(),
                 hand,
@@ -84,7 +87,7 @@ public final class PlayerRecordNode implements Serializable {
     static PlayerRecordNode ZERO = createZero();
 
     public static PlayerRecordNode createZero() {
-        return new PlayerRecordNode(0,0,0,0,0,"","",null,0, null, null, null, null, null);
+        return new PlayerRecordNode(0,0,0,0,0, 0,"","",null,0, null, null, null, null, null);
     }
 
     @Override
@@ -97,6 +100,7 @@ public final class PlayerRecordNode implements Serializable {
                             this.z == node.z &&
                             this.yaw == node.yaw &&
                             this.pitch == node.pitch &&
+                            this.headYaw == node.headYaw &&
                             this.level.equals(node.level) &&
                             this.tagName.equals(node.tagName) &&
                             this.item.equals(node.item) &&
@@ -111,12 +115,13 @@ public final class PlayerRecordNode implements Serializable {
         return false;
     }
 
-    private PlayerRecordNode(double x, double y, double z, double yaw, double pitch, String level, String tagName, Item item, long dataFlags, Item armor0, Item armor1, Item armor2, Item armor3, Item offhand) {
+    private PlayerRecordNode(double x, double y, double z, double yaw, double pitch, double headYaw, String level, String tagName, Item item, long dataFlags, Item armor0, Item armor1, Item armor2, Item armor3, Item offhand) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.yaw = yaw;
         this.pitch = pitch;
+        this.headYaw = headYaw;
         this.level = level;
         this.tagName = tagName;
         this.item = item;
@@ -166,6 +171,14 @@ public final class PlayerRecordNode implements Serializable {
 
     public void setPitch(double pitch) {
         this.pitch = pitch;
+    }
+
+    public double getHeadYaw() {
+        return headYaw;
+    }
+
+    public void setHeadYaw(double headYaw) {
+        this.headYaw = headYaw;
     }
 
     public String getLevel() {

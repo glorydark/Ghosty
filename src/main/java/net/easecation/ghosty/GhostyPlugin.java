@@ -46,7 +46,7 @@ public class GhostyPlugin extends PluginBase implements Listener {
 
     @Override
     public void onLoad() {
-        if (instance == null) instance = this;
+        instance = this;
         InputStream skinStream = this.getResource("skin.png");
         BufferedImage bufferedImage = null;
         try {

@@ -12,6 +12,7 @@ public class PlayerUpdatedRotation implements PlayerUpdated {
 
     private double yaw;
     private double pitch;
+    private double headYaw;
 
     public double getYaw() {
         return yaw;
@@ -19,6 +20,10 @@ public class PlayerUpdatedRotation implements PlayerUpdated {
 
     public double getPitch() {
         return pitch;
+    }
+
+    public double getHeadYaw() {
+        return headYaw;
     }
 
     @Override
@@ -36,6 +41,7 @@ public class PlayerUpdatedRotation implements PlayerUpdated {
         Location location = ghost.getLocation();
         location.yaw = yaw;
         location.pitch = pitch;
+        location.headYaw = headYaw;
         ghost.teleport(location);
     }
 
@@ -43,38 +49,46 @@ public class PlayerUpdatedRotation implements PlayerUpdated {
     public PlayerRecordNode applyTo(PlayerRecordNode node) {
         node.setYaw(yaw);
         node.setPitch(pitch);
+        node.setHeadYaw(headYaw);
         return node;
     }
 
-    public static PlayerUpdatedRotation of(double yaw, double pitch) {
-        return new PlayerUpdatedRotation(yaw, pitch);
+    public static PlayerUpdatedRotation of(double yaw, double pitch, double headYaw) {
+        return new PlayerUpdatedRotation(yaw, pitch, headYaw);
     }
 
     public PlayerUpdatedRotation(BinaryStream stream) {
         this.read(stream);
     }
 
-    private PlayerUpdatedRotation(double yaw, double pitch) {
+    private PlayerUpdatedRotation(double yaw, double pitch, double headYaw) {
         this.yaw = yaw;
         this.pitch = pitch;
+        this.headYaw = headYaw;
     }
 
     @Override
     public boolean equals(Object obj) {
         if(!(obj instanceof PlayerUpdatedRotation o)) return false;
-        return (yaw == o.yaw) && (pitch == o.pitch);
+        return (yaw == o.yaw) && (pitch == o.pitch) && (headYaw == o.headYaw);
     }
 
     @Override
     public void write(BinaryStream stream) {
         stream.putFloat((float) this.yaw);
         stream.putFloat((float) this.pitch);
+        stream.putFloat((float) this.headYaw);
     }
 
     @Override
     public void read(BinaryStream stream) {
         this.yaw = stream.getFloat();
         this.pitch = stream.getFloat();
+        try {
+            this.headYaw = stream.getFloat();
+        } catch (Throwable e) {
+            this.headYaw = this.pitch;
+        }
     }
 
     @Override

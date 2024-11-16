@@ -63,8 +63,9 @@ public class LmlPlayerRecord implements PlayerRecord {
             push(tick, PlayerUpdatedPositionXYZ.of(x, y, z));
         double la = last.getYaw(), a = node.getYaw();
         double lp = last.getPitch(), p = node.getPitch();
-        if(la != a || lp != p)
-            push(tick, PlayerUpdatedRotation.of(a, p));
+        double lh = last.getHeadYaw(), h = node.getHeadYaw();
+        if(la != a || lp != p || lh != h)
+            push(tick, PlayerUpdatedRotation.of(a, p, h));
         String ln = last.getTagName(), n = node.getTagName();
         if(!Objects.equals(ln, n))
             push(tick, PlayerUpdatedTagName.of(n));

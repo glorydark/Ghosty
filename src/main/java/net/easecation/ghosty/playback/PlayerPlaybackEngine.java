@@ -166,6 +166,7 @@ public class PlayerPlaybackEngine {
         int tickRotation = -1;
         double yaw = 0;
         double pitch = 0;
+        double headYaw = 0;
 
         public void setXYZ(int tick, double x, double y, double z) {
             this.tickXYZ = tick;
@@ -174,10 +175,11 @@ public class PlayerPlaybackEngine {
             this.z = z;
         }
 
-        public void setRotation(int tick, double yaw, double pitch) {
+        public void setRotation(int tick, double yaw, double pitch, double headYaw) {
             this.tickRotation = tick;
             this.yaw = yaw;
             this.pitch = pitch;
+            this.headYaw = headYaw;
         }
     }
 
@@ -209,7 +211,7 @@ public class PlayerPlaybackEngine {
                         return;
                     }
                     PlayerUpdatedRotation xyz = (PlayerUpdatedRotation) u.entry();
-                    interpolationNext0.setRotation(tick, xyz.getYaw(), xyz.getPitch());
+                    interpolationNext0.setRotation(tick, xyz.getYaw(), xyz.getPitch(), xyz.getHeadYaw());
                 });
                 interpolationNext = interpolationNext0;
             }
