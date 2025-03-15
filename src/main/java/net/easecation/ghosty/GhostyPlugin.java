@@ -55,7 +55,11 @@ public class GhostyPlugin extends PluginBase implements Listener {
             e.printStackTrace();
         }
         PlaybackNPC.defaultSkin = new Skin();
-        PlaybackNPC.defaultSkin.setSkinData(bufferedImage);
+        if (bufferedImage != null) {
+            PlaybackNPC.defaultSkin.setSkinData(bufferedImage);
+        } else {
+            PlaybackNPC.defaultSkin = Skin.NO_PERSONA_SKIN;
+        }
     }
 
     @Override

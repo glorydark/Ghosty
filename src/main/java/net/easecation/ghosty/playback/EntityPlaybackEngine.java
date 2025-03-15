@@ -1,5 +1,6 @@
 package net.easecation.ghosty.playback;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
@@ -156,7 +157,7 @@ public class EntityPlaybackEngine {
             for (EntityUpdated node : updates) {
                 node.processTo(entity);
             }
-            entity.spawnToAll();
+            this.entity.spawnToAll();
             if (DEBUG_DUMP) {
                 GhostyPlugin.getInstance().getLogger().debug("entity[" + record.getEntityIdentifier() + "] " + tick + " -> spawn " + record.getNetworkId() + " item=" + entity.item);
             }

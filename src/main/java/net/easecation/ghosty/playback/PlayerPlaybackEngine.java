@@ -50,6 +50,7 @@ public class PlayerPlaybackEngine {
     private PlaybackNPC npc;
     private PlaybackIterator<PlayerUpdated> iterator;
     private final Set<Player> attachedPlayers = new HashSet<>();
+    private List<Player> watchers;
 
     public PlayerPlaybackEngine(PlayerRecord record) {
         this(record, null, null);
@@ -59,14 +60,15 @@ public class PlayerPlaybackEngine {
         this(record, level, null);
     }
 
-    public PlayerPlaybackEngine(PlayerRecord record, Level level, List<Player> viewers) {
-        this(record, level, viewers, null);
+    public PlayerPlaybackEngine(PlayerRecord record, Level level, List<Player> watchers) {
+        this(record, level, watchers, null);
     }
 
-    public PlayerPlaybackEngine(PlayerRecord record, Level level, List<Player> viewers, Skin skin) {
+    public PlayerPlaybackEngine(PlayerRecord record, Level level, List<Player> watchers, Skin skin) {
         this.record = record;
         this.level = level;
         this.iterator = record.iterator();
+        this.watchers = watchers;
         if (level != null) {
             this.taskHandler = Server.getInstance().getScheduler().scheduleRepeatingTask(GhostyPlugin.getInstance(), this::onTick, 1);
             GhostyPlugin.getInstance().getLogger().debug(record.getPlayerName() + " playBack started!");
@@ -260,6 +262,7 @@ public class PlayerPlaybackEngine {
             updates.forEach(e -> e.applyTo(init));
             Location loc = new Location(init.getX(), init.getY(), init.getZ(), init.getYaw(), init.getPitch(), level);
             this.npc = new PlaybackNPC(this, loc, record.getSkin() == null ? PlaybackNPC.defaultSkin : record.getSkin(), init.getTagName(), null);
+            this.npc.setWatchers(this.watchers);
             this.npc.spawnToAll();
             if (DEBUG_DUMP) {
                 GhostyPlugin.getInstance().getLogger().debug(record.getPlayerName() + " " + tick + " -> spawn " + record.getPlayerName());
@@ -319,7 +322,7 @@ public class PlayerPlaybackEngine {
         }
         for (Player player : this.attachedPlayers) {
             player.setPosition(this.npc);
-            player.sendPosition(player.getPlayer(), player.getYaw(), player.getPitch(), MovePlayerPacket.MODE_TELEPORT);
+            player.sendPosition(this.npc, this.npc.getYaw(), this.npc.getPitch(), MovePlayerPacket.MODE_TELEPORT);
             if (onPlayerAttachTick != null) {
                 onPlayerAttachTick.accept(this, player);
             }

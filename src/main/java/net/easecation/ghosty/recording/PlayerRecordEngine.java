@@ -6,6 +6,7 @@ import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.TakeItemEntityPacket;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.scheduler.TaskHandler;
 import net.easecation.ghosty.GhostyPlugin;
 import net.easecation.ghosty.recording.player.LmlPlayerRecord;
@@ -46,7 +47,16 @@ public class PlayerRecordEngine {
     public PlayerRecordEngine(Player player, Function<Player, PlayerRecord> recordFactory) {
         this.player = player;
         this.record = recordFactory.apply(player);
-        this.taskHandler = Server.getInstance().getScheduler().scheduleRepeatingTask(GhostyPlugin.getInstance(), this::onTick, 1);
+        this.taskHandler = Server.getInstance().getScheduler().scheduleRepeatingTask(GhostyPlugin.getInstance(), new Task() {
+            @Override
+            public void onRun(int i) {
+                if (isStopped()) {
+                    this.cancel();
+                    return;
+                }
+                onTick();
+            }
+        }, 1);
         GhostyPlugin.getInstance().recordingPlayerEngines.put(player, this);
         GhostyPlugin.getInstance().getLogger().debug(player.getName() + " record started!");
     }

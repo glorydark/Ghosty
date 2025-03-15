@@ -134,10 +134,16 @@ public class LevelPlaybackEngine {
         }
         if (this.taskHandler != null) this.taskHandler.cancel();
         if (this.onStopDo != null) this.onStopDo.run();
-        GhostyPlugin.getInstance().getLogger().debug(level.getName() + " level playback stopped!");
+        if (level != null && level.getProvider() != null) {
+            GhostyPlugin.getInstance().getLogger().debug(level.getName() + " level playback stopped!");
+        }
     }
 
     public void onTick() {
+        if (this.level == null || this.level.getProvider() == null) {
+            this.stopPlayback();
+            return;
+        }
         if (!this.playing) {
             return;
         }

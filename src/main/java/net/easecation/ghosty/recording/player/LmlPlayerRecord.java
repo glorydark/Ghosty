@@ -34,8 +34,12 @@ public class LmlPlayerRecord implements PlayerRecord {
         try {
             this.skin = stream.getSkin(GhostyPlugin.DATA_SAVE_PROTOCOL);
         } catch (IllegalArgumentException e) {
-            stream.setOffset(offset);
-            this.skin = stream.getSkin(GhostyPlugin.DATA_SAVE_PROTOCOL);
+            try {
+                stream.setOffset(offset);
+                this.skin = stream.getSkin(GhostyPlugin.DATA_SAVE_PROTOCOL);
+            } catch (IllegalArgumentException e1) {
+                this.skin = Skin.NO_PERSONA_SKIN;
+            }
         }
         int len = (int) stream.getUnsignedVarInt();
         for (int i = 0; i < len; i++) {

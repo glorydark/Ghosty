@@ -26,10 +26,10 @@ public class PlaybackNPC extends EntityHuman implements InventoryHolder {
     public static Skin defaultSkin;
 
     private final PlayerPlaybackEngine engine;
-    private final List<Player> viewers;
+    private List<Player> watchers;
     private final Set<Player> hideFrom = new HashSet<>();
 
-    public PlaybackNPC(FullChunk chunk, CompoundTag nbt, PlayerPlaybackEngine engine, Skin skin, String name, List<Player> viewers) {
+    public PlaybackNPC(FullChunk chunk, CompoundTag nbt, PlayerPlaybackEngine engine, Skin skin, String name, List<Player> watchers) {
         super(chunk, nbt);
         this.engine = engine;
         this.setSkin(skin == null ? defaultSkin : skin);
@@ -37,10 +37,10 @@ public class PlaybackNPC extends EntityHuman implements InventoryHolder {
         this.setNameTagAlwaysVisible(true);
         this.getInventory().setHeldItemSlot(0);
         this.setNameTag(name);
-        this.viewers = viewers;
+        this.watchers = watchers;
     }
 
-    public PlaybackNPC(PlayerPlaybackEngine engine, Location pos, Skin skin, String name, List<Player> viewers){
+    public PlaybackNPC(PlayerPlaybackEngine engine, Location pos, Skin skin, String name, List<Player> watchers){
         this(pos.getLevel().getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4),
                 new CompoundTag()
                         .putList(new ListTag<DoubleTag>("Pos")
@@ -57,7 +57,7 @@ public class PlaybackNPC extends EntityHuman implements InventoryHolder {
                         .putCompound("Skin", (new CompoundTag())
                                         .putByteArray("Data", skin.getSkinData().data)
                                         .putString("ModelId", skin.getSkinId())
-                        ), engine, skin, name, viewers);
+                        ), engine, skin, name, watchers);
         this.saveNBT();
     }
 
@@ -99,7 +99,7 @@ public class PlaybackNPC extends EntityHuman implements InventoryHolder {
 
     @Override
     public void spawnTo(Player player) {
-        if (this.viewers != null && !this.viewers.contains(player)) return;
+        if (this.watchers != null && !this.watchers.contains(player)) return;
         if (this.hideFrom.contains(player)) return;
         if (!this.hasSpawned.containsKey(player.getLoaderId())) {
             this.hasSpawned.put(player.getLoaderId(), player);
@@ -155,5 +155,13 @@ public class PlaybackNPC extends EntityHuman implements InventoryHolder {
     @Override
     public void close() {
         super.close();
+    }
+
+    public List<Player> getWatchers() {
+        return watchers;
+    }
+
+    public void setWatchers(List<Player> watchers) {
+        this.watchers = watchers;
     }
 }
