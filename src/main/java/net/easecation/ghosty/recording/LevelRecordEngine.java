@@ -57,16 +57,7 @@ public class LevelRecordEngine {
         for (Entity entity : level.getEntities()) {
             this.onEntitySpawn(entity);
         }
-        this.taskHandler = Server.getInstance().getScheduler().scheduleRepeatingTask(GhostyPlugin.getInstance(), new Task() {
-            @Override
-            public void onRun(int i) {
-                if (!isRecording()) {
-                    this.cancel();
-                    return;
-                }
-                onTick();
-            }
-        }, 1);
+        this.taskHandler = Server.getInstance().getScheduler().scheduleRepeatingTask(GhostyPlugin.getInstance(), this::onTick, 1);
         GhostyPlugin.getInstance().recordingLevelEngines.put(level, this);
     }
 
